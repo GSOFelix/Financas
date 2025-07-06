@@ -12,6 +12,7 @@ export default function Relatorios(){
     const [tipoSelecionado,setTipoSelecionado] = useState('');
     const [showModal,setShowModal] = useState(false);
     const [editeItem,setEditItem] = useState(null);
+    const [input,setInput] = useState('');
     const handleModal = () =>{
         setShowModal(!showModal);
     }
@@ -43,7 +44,9 @@ export default function Relatorios(){
                             </i>
                         </div>
                         <input type="text" className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#22c55e] focus:border-[#22c55e] sm:text-sm" 
-                        placeholder="Pesquisar transações..."/>
+                        placeholder="Pesquisar transações..."
+                        value={input}
+                        onChange={(e)=> setInput(e.target.value)}/>
                     </div>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -92,6 +95,7 @@ export default function Relatorios(){
           </div>
 
           <RelacaoTransacao
+            input={input}
             mes={mesSelecionado}
             categoria={categoriaSelecionada}
             tipo={tipoSelecionado}

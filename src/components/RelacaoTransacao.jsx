@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useFireBaseActions } from "../hooks/useFirebaseActions"
 import Swal from 'sweetalert2';
 
-export default function RelacaoTransacao({mes,categoria,tipo,onEdit,DeletarLancamento}){
+export default function RelacaoTransacao({input,mes,categoria,tipo,onEdit,DeletarLancamento}){
     const {buscarLancamentos} = useFireBaseActions();
     const [Lancamentos,setLancamentos] = useState([]);
     
@@ -39,12 +39,16 @@ export default function RelacaoTransacao({mes,categoria,tipo,onEdit,DeletarLanca
             const matchTipo =
               !tipo || lan.tipo === tipo;
       
-            return matchCategoria && matchMes && matchTipo;
+              const matchDescricao =
+              !input ||
+              lan.descricao?.toLowerCase().includes(input.toLowerCase());
+      
+            return matchCategoria && matchMes && matchTipo && matchDescricao;
           });
       
           setLancamentos(filtrados);
         });
-      }, [mes, categoria, tipo]);
+      }, [,input,mes, categoria, tipo]);
 
 
     return(
