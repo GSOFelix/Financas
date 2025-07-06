@@ -1,0 +1,125 @@
+import { useState, useEffect } from "react";
+import { useFireBaseActions } from "../hooks/useFirebaseActions";
+
+export default function ModalEditar({ dados, closeModal, salvarEdicao }) {
+    const {buscarCategorias} = useFireBaseActions();
+  const [categorias,setCategorias] = useState([]);
+  const [descricao, setDescricao] = useState('');
+  const [categoria, setCategoria] = useState('');
+  const [data, setData] = useState('');
+  const [valor, setValor] = useState('');
+  const [tipo, setTipo] = useState('C');
+  
+  useEffect(()=> {
+    buscarCategorias((categorias)=>{
+        setCategorias(categorias);
+    })
+},[]);
+
+  useEffect(() => {
+    if (dados) {
+      setDescricao(dados.descricao || '');
+      setCategoria(dados.categoria || ''); // ou ajustar se for referência
+      setData(dados.data?.toDate().toISOString().split('T')[0] || '');
+      setValor(dados.valor || '');
+      setTipo(dados.tipo || 'C');
+    }
+  }, [dados]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const atualizacao = {
+      ...dados,
+      descricao,
+      categoria,
+      data: new Date(data),
+      valor: parseFloat(valor),
+      tipo
+    };
+
+    salvarEdicao(atualizacao);
+    closeModal();
+  };
+
+  
+
+  return (
+    <div className="fixed inset-0 z-50 backdrop-blur-sm bg-black/30 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+        <div className="bg-[#171717] text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+          <h3 className="text-lg font-semibold">Editar Transação</h3>
+          <button onClick={closeModal} className="text-white hover:text-gray-300">
+            <i className="fas fa-times"></i>
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6">
+          <div className="mb-4">
+            <label htmlFor="descricao" className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+            <input type="text" id="descricao" value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e]" />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="categoria" className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+            <select id="categoria" 
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e]"
+            value={categoria}
+            onChange={(e) => setCategoria(e.target.value)}>
+            {categorias.map((cat) => (
+                <option key={cat.id} value={cat.descricao}>
+                    {cat.descricao}
+                </option>
+            ))}
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="data" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
+            <input type="date" id="data" value={data}
+              onChange={(e) => setData(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e]" />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="valor" className="block text-sm font-medium text-gray-700 mb-1">Valor (R$)</label>
+            <input type="number" step="0.01" id="valor" value={valor}
+              onChange={(e) => setValor(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e]" />
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+            <div className="flex space-x-4">
+              <label className="inline-flex items-center">
+                <input type="radio" name="tipo" value="C" checked={tipo === 'C'}
+                  onChange={() => setTipo('C')}
+                  className="h-4 w-4 text-[#22c55e] focus:ring-[#22c55e] border-gray-300" />
+                <span className="ml-2 text-gray-700">Receita</span>
+              </label>
+              <label className="inline-flex items-center">
+                <input type="radio" name="tipo" value="D" checked={tipo === 'D'}
+                  onChange={() => setTipo('D')}
+                  className="h-4 w-4 text-red-600 focus:ring-red-600 border-gray-300" />
+                <span className="ml-2 text-gray-700">Despesa</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-3">
+            <button type="button" onClick={closeModal}
+              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#22c55e]">
+              Cancelar
+            </button>
+            <button type="submit"
+              className="px-4 py-2 bg-[#22c55e] hover:bg-[#16a34a] text-white rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#22c55e]">
+              Salvar Alterações
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

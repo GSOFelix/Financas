@@ -47,8 +47,20 @@ export function useFireBaseActions(){
             })
         }catch(e){
             console.error('Error adding lancamento: ', e);
+            
         }
     }
 
-    return {buscarLancamentos,buscarCategorias,addLancamento}
+    const editarLancamento = async (atualizacao) =>{
+        const { id, ...dadosParaAtualizar } = atualizacao; 
+        const documentoRef = doc(db, 'lancamentos', id);
+        await updateDoc(documentoRef, dadosParaAtualizar);
+    }
+
+   const apagarLancamento = async (lancamentoId) => {
+        const documento = doc(db, 'lancamentos', lancamentoId);
+        await deleteDoc(documento);
+      }
+
+    return {buscarLancamentos,buscarCategorias,addLancamento,editarLancamento,apagarLancamento}
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useFireBaseActions } from "../hooks/useFirebaseActions";
+import Swal from "sweetalert2";
 
 export default function TransactionForm(){
     
@@ -10,6 +11,18 @@ export default function TransactionForm(){
     const [Amount,setAmout] = useState(0);
     const [DateTime,setDateTime] = useState('');
     const [tipoLancamento, setTipoLancamento] = useState('C');
+
+    const toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: '#f0fdf4',
+        color: '#14532d',
+        iconColor: '#22c55e',
+      });
 
     const handleSubmitLancamento = () => {
         if (!categoriaSelecionada || !descLancamento || !Amount || !DateTime) {
@@ -25,9 +38,10 @@ export default function TransactionForm(){
           tipo: tipoLancamento                    
         };
       
-        console.log('Lançamento pronto para salvar:', data);
         addLancamento(data);
         limparCampos();
+          
+          toast.fire({ text: 'Registrado com sucesso.' });
       };
 
     const limparCampos = () => {
@@ -56,13 +70,13 @@ export default function TransactionForm(){
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                         <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-                        <input type="text" id="description" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        <input type="text" id="description" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e]"
                         value={descLancamento}
                         onChange={(e)=> setDescLancamento(e.target.value)} />
                     </div>
                     <div>
                         <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">Valor (R$)</label>
-                        <input type="number" step="0.01" id="amount" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        <input type="number" step="0.01" id="amount" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e]"
                         value={Amount}
                         onChange={(e)=> setAmout(e.target.value)} />
                     </div>

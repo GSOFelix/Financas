@@ -1,7 +1,11 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet,useLocation } from 'react-router-dom';
 
 export default function Layout() {
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path;
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       <aside
@@ -27,20 +31,24 @@ export default function Layout() {
         </div>
 
         <nav className="space-y-2">
-          <a
-            href="#"
-            className="flex items-center space-x-2 p-2 rounded-lg bg-[#171717] text-[#4ade80]"
+          <Link
+            to="/"
+            className={`flex items-center space-x-2 p-2 rounded-lg ${
+              isActive('/') ? 'bg-[#171717] text-[#4ade80]' : 'text-gray-300 hover:bg-[#171717] hover:text-white'
+            }`}
           >
             <i className="fas fa-home"></i>
             <span>Dashboard</span>
-          </a>
-          <a
-            href="#"
-            className="flex items-center space-x-2 p-2 rounded-lg text-gray-300 hover:bg-[#171717] hover:text-white"
+          </Link>
+          <Link
+            to="/relatorios"
+            className={`flex items-center space-x-2 p-2 rounded-lg ${
+              isActive('/relatorios') ? 'bg-[#171717] text-[#4ade80]' : 'text-gray-300 hover:bg-[#171717] hover:text-white'
+            }`}
           >
             <i className="fas fa-chart-line"></i>
             <span>Relatórios</span>
-          </a>
+          </Link>
         </nav>
 
         <div className="mt-auto pt-4 border-t border-[#262626] hidden md:block">
@@ -49,8 +57,8 @@ export default function Layout() {
               <span className="text-white font-bold">U</span>
             </div>
             <div>
-              <p className="text-sm font-medium">Usuário</p>
-              <p className="text-xs text-gray-400">admin@example.com</p>
+              <p className="text-sm font-medium">Aluno</p>
+              <p className="text-xs text-gray-400">alunoproz@example.com</p>
             </div>
           </div>
         </div>
