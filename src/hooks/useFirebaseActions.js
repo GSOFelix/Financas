@@ -20,5 +20,16 @@ export function useFireBaseActions(){
         })
     }
 
-    return {buscarLancamentos}
+    const buscarCategorias = (callback) => {
+        onSnapshot(collection(db,'categoria'), (snapshot) => {
+            const result = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+            console.log(result);
+            callback(result);
+        })
+    }
+
+    return {buscarLancamentos,buscarCategorias}
 }
