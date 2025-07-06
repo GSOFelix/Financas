@@ -1,6 +1,7 @@
 import { useState,useEffect } from 'react';
 import { useFireBaseActions } from '../hooks/useFirebaseActions';
 import TransactionForm from '../components/transactionForm';
+import ListTransaction from '../components/ListTransaction';
 
 export default function DashBoard() {
   const {buscarLancamentos} = useFireBaseActions();
@@ -85,6 +86,7 @@ export default function DashBoard() {
         
         </div>
         <TransactionForm/>
+        <ListTransaction/>
       </div>
     </>
   );

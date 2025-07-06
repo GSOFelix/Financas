@@ -2,9 +2,41 @@ import { useEffect, useState } from "react"
 import { useFireBaseActions } from "../hooks/useFirebaseActions";
 
 export default function TransactionForm(){
-    const{buscarCategorias} = useFireBaseActions();
+    
+    const{buscarCategorias,addLancamento} = useFireBaseActions();
     const [categorias,setCategorias] = useState([]);
     const [categoriaSelecionada, setCategoriaSelecionada] = useState('');
+    const [descLancamento,setDescLancamento] = useState('');
+    const [Amount,setAmout] = useState(0);
+    const [DateTime,setDateTime] = useState('');
+    const [tipoLancamento, setTipoLancamento] = useState('C');
+
+    const handleSubmitLancamento = () => {
+        if (!categoriaSelecionada || !descLancamento || !Amount || !DateTime) {
+          alert('Preencha todos os campos obrigatórios!');
+          return;
+        }
+      
+        const data = {
+          categoria: categoriaSelecionada,        
+          descricao: descLancamento,
+          valor: parseFloat(Amount),              
+          DateTime: DateTime,                     
+          tipo: tipoLancamento                    
+        };
+      
+        console.log('Lançamento pronto para salvar:', data);
+        addLancamento(data);
+        limparCampos();
+      };
+
+    const limparCampos = () => {
+        setCategoriaSelecionada('');
+        setDescLancamento('');
+        setAmout(0);
+        setDateTime('');
+        setTipoLancamento('C');
+    };
 
     useEffect(()=> {
         buscarCategorias((categorias)=>{
@@ -24,11 +56,15 @@ export default function TransactionForm(){
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                         <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-                        <input type="text" id="description" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                        <input type="text" id="description" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        value={descLancamento}
+                        onChange={(e)=> setDescLancamento(e.target.value)} />
                     </div>
                     <div>
                         <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">Valor (R$)</label>
-                        <input type="number" step="0.01" id="amount" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                        <input type="number" step="0.01" id="amount" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        value={Amount}
+                        onChange={(e)=> setAmout(e.target.value)} />
                     </div>
 
                     <div>
@@ -42,8 +78,8 @@ export default function TransactionForm(){
                             onChange={(e) => setCategoriaSelecionada(e.target.value)}
                         >
                             <option value="">Selecione uma categoria</option>
-                            {categorias.map((cat,index) => (
-                            <option key={cat.id} value={cat.index}>
+                            {categorias.map((cat) => (
+                            <option key={cat.id} value={cat.descricao}>
                                 {cat.descricao}
                             </option>
                             ))}
@@ -52,12 +88,35 @@ export default function TransactionForm(){
 
                     <div>
                         <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
-                        <input type="datetime-local" id="date" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e]" />
+                        <input type="datetime-local" id="date" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e]"
+                        value={DateTime}
+                        onChange={(e)=> setDateTime(e.target.value)} />
                     </div>
                     
                 </div>
                 <div className="flex items-center mt-4 space-x-4">
-                    
+                    <div className="flex items-center">
+                        <input type="radio" id="income" className="h-4 w-4 text-[#16a34a] focus:ring-[#22c55e]" name="tipo"
+                        value="C"
+                        checked={tipoLancamento === 'C'}
+                        onChange={(e) => setTipoLancamento(e.target.value)}/>
+                        <label htmlFor="income" className="ml-2 block text-sm font-medium text-gray-700">Receita</label>
+                    </div>
+
+                    <div className="flex items-center">
+                        <input type="radio" id="expense" className="h-4 w-4 text-[#16a34a] focus:ring-[#22c55e]"
+                        name="tipo"
+                        value="D"
+                        checked={tipoLancamento === 'D'}
+                        onChange={(e) => setTipoLancamento(e.target.value)}/>
+                        <label htmlFor="expense" className="ml-2 block text-sm font-medium text-gray-700">Despesa</label>
+                    </div>
+                </div>
+                <div className="mt-4 flex justify-end space-x-3">
+                    <button type="button" className=" px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#22c55e]"
+                    onClick={limparCampos}>Cancelar</button>
+                    <button type="button" className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#16a34a] hover:bg-[#15803d] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#22c55e]"
+                    onClick={handleSubmitLancamento}>Adicionar Transação</button>
                 </div>
             </form>
         </div>
