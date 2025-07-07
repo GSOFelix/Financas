@@ -2,12 +2,15 @@ import { useState,useEffect } from 'react';
 import { useFireBaseActions } from '../hooks/useFirebaseActions';
 import TransactionForm from '../components/transactionForm';
 import ListTransaction from '../components/ListTransaction';
+import NewList from '../components/NewList';
+import ModalAddTransacao from '../components/ModalAddTransacao';
 
 export default function DashBoard() {
   const {buscarLancamentos} = useFireBaseActions();
   const [totalCarteira, setTotalCarteira] = useState(0.00);
   const [totalCredito,setTotalCredito] = useState(0.00);
   const [totalDebito,setTotalDebito] = useState(0.00);
+  const [showModal,setShowModal] = useState(false);
 
   useEffect(() => {
     buscarLancamentos((lancamentos) => {
@@ -85,8 +88,18 @@ export default function DashBoard() {
           </div>
         
         </div>
-        <TransactionForm/>
-        <ListTransaction/>
+
+        <div className="px-4 py-3 flex justify-end">
+          <button
+            className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            onClick={() => setShowModal(true)}
+          >
+            <i className="fas fa-plus mr-1"></i> Nova Transação
+          </button>
+        </div>
+        
+        <NewList/>
+        {showModal && <ModalAddTransacao closeModal={()=> setShowModal(false)}/>}
       </div>
     </>
   );

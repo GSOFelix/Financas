@@ -2,26 +2,14 @@ import { useState, useEffect } from "react";
 import { useFireBaseActions } from "../hooks/useFirebaseActions";
 import Swal from "sweetalert2";
 
-export default function ModalEditar({ dados, closeModal, salvarEdicao }) {
-    const {buscarCategorias} = useFireBaseActions();
-  const [categorias,setCategorias] = useState([]);
-  const [descricao, setDescricao] = useState('');
-  const [categoria, setCategoria] = useState('');
-  const [data, setData] = useState('');
-  const [valor, setValor] = useState('');
-  const [tipo, setTipo] = useState('C');
-  
-  const toastErro = Swal.mixin({
-    toast: true,
-    position: 'top-end',
-    icon: 'error',
-    showConfirmButton: false,
-    timer: 2000,
-    timerProgressBar: true,
-    background: '#red',
-    color: '#14532d',
-    iconColor: 'red',
-  });
+export default function ModalAddTransacao({closeModal}) {
+    const {buscarCategorias,addLancamento} = useFireBaseActions();
+    const [categorias,setCategorias] = useState([]);
+    const [descricao, setDescricao] = useState('');
+    const [categoria, setCategoria] = useState('');
+    const [DataLan, setData] = useState('');
+    const [valor, setValor] = useState('');
+    const [tipo, setTipo] = useState('C');
   
   useEffect(()=> {
     buscarCategorias((categorias)=>{
@@ -29,35 +17,62 @@ export default function ModalEditar({ dados, closeModal, salvarEdicao }) {
     })
 },[]);
 
-  useEffect(() => {
-    if (dados) {
-      setDescricao(dados.descricao || '');
-      setCategoria(dados.categoria || ''); // ou ajustar se for referência
-      setData(dados.data?.toDate().toISOString().split('T')[0] || '');
-      setValor(dados.valor || '');
-      setTipo(dados.tipo || 'C');
-    }
-  }, [dados]);
+const toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  icon: 'success',
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+  background: '#f0fdf4',
+  color: '#14532d',
+  iconColor: '#22c55e',
+});
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const toastErro = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  icon: 'error',
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+  background: '#red',
+  color: '#14532d',
+  iconColor: 'red',
+});
 
-    if(valor <= 0){
-      toastErro.fire({text:"O valor deve ser maior que zero."})
+const handleSubmitLancamento = (e) => {
+  e.preventDefault()
+  if (!categoria || !descricao || !valor || !DataLan) {
+      toastErro.fire({ text: 'Os campos são obrigatorios' });
+    return;
+  }
+  if(valor <= 0){
+      toastErro.fire({text: 'O valor deve ser maior que zero'})
       return;
-    }
-    const atualizacao = {
-      ...dados,
-      descricao,
-      categoria,
-      data: new Date(data),
-      valor: parseFloat(valor),
-      tipo
-    };
+  }
 
-    salvarEdicao(atualizacao);
-    closeModal();
+  const data = {
+    categoria: categoria,        
+    descricao: descricao,
+    valor: parseFloat(valor),              
+    DateTime: DataLan,                     
+    tipo: tipo                    
   };
+
+  addLancamento(data);
+  limparCampos();
+  toast.fire({ text: 'Registrado com sucesso.' });
+  closeModal()
+};
+
+const limparCampos = () => {
+  setCategoria('');
+  setDescricao('');
+  setValor(0);
+  setData('');
+  setTipo('C');
+};
 
   
 
@@ -65,13 +80,13 @@ export default function ModalEditar({ dados, closeModal, salvarEdicao }) {
     <div className="fixed inset-0 z-50 backdrop-blur-sm bg-black/30 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
         <div className="bg-[#171717] text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Editar Transação</h3>
+          <h3 className="text-lg font-semibold">Adicionar Lançamento</h3>
           <button onClick={closeModal} className="text-white hover:text-gray-300">
             <i className="fas fa-times"></i>
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmitLancamento} className="p-6">
           <div className="mb-4">
             <label htmlFor="descricao" className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
             <input type="text" id="descricao" value={descricao}
@@ -84,7 +99,9 @@ export default function ModalEditar({ dados, closeModal, salvarEdicao }) {
             <select id="categoria" 
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e]"
             value={categoria}
+            
             onChange={(e) => setCategoria(e.target.value)}>
+               <option value="">Selecione uma categoria</option>
             {categorias.map((cat) => (
                 <option key={cat.id} value={cat.descricao}>
                     {cat.descricao}
@@ -95,7 +112,7 @@ export default function ModalEditar({ dados, closeModal, salvarEdicao }) {
 
           <div className="mb-4">
             <label htmlFor="data" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
-            <input type="date" id="data" value={data}
+            <input type="datetime-local" id="data" value={DataLan}
               onChange={(e) => setData(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e]" />
           </div>
@@ -132,7 +149,7 @@ export default function ModalEditar({ dados, closeModal, salvarEdicao }) {
             </button>
             <button type="submit"
               className="px-4 py-2 bg-[#22c55e] hover:bg-[#16a34a] text-white rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#22c55e]">
-              Salvar Alterações
+              Salvar
             </button>
           </div>
         </form>

@@ -24,10 +24,26 @@ export default function TransactionForm(){
         iconColor: '#22c55e',
       });
 
+      const toastErro = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: '#red',
+        color: '#14532d',
+        iconColor: 'red',
+      });
+
     const handleSubmitLancamento = () => {
         if (!categoriaSelecionada || !descLancamento || !Amount || !DateTime) {
-          alert('Preencha todos os campos obrigatórios!');
+            toastErro.fire({ text: 'Os campos são obrigatorios' });
           return;
+        }
+        if(Amount <= 0){
+            toastErro.fire({text: 'O valor deve ser maior que zero'})
+            return;
         }
       
         const data = {
