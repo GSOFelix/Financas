@@ -1,12 +1,12 @@
 import { useState,useEffect } from 'react';
 import { useFireBaseActions } from '../hooks/useFirebaseActions';
-import TransactionForm from '../components/transactionForm';
-import ListTransaction from '../components/ListTransaction';
 import NewList from '../components/NewList';
 import ModalAddTransacao from '../components/ModalAddTransacao';
+import { useAuth } from '../context/authContext';
 
 export default function DashBoard() {
-  const {buscarLancamentos} = useFireBaseActions();
+  const {user} = useAuth();
+  const {buscarLancamentos} = useFireBaseActions(user);
   const [totalCarteira, setTotalCarteira] = useState(0.00);
   const [totalCredito,setTotalCredito] = useState(0.00);
   const [totalDebito,setTotalDebito] = useState(0.00);
@@ -19,7 +19,7 @@ export default function DashBoard() {
       let debito = 0;
 
       lancamentos.forEach((item) => {
-        const valor = parseFloat(item.valor); // valor precisa estar como número
+        const valor = parseFloat(item.valor); 
         if (item.tipo === 'C'){
           total += valor;
           credito += valor;

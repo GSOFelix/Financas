@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useFireBaseActions } from "../hooks/useFirebaseActions";
+import { useAuth } from "../context/authContext";
 
 export default function NewList() {
-  const { buscarLancamentos } = useFireBaseActions();
+  const {user} = useAuth();
+  const { buscarLancamentos } = useFireBaseActions(user);
   const [Lancamentos, setLancamentos] = useState([]);
 
   useEffect(() => {

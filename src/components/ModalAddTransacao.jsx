@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useFireBaseActions } from "../hooks/useFirebaseActions";
 import Swal from "sweetalert2";
+import { useAuth } from "../context/authContext";
 
 export default function ModalAddTransacao({closeModal}) {
-    const {buscarCategorias,addLancamento} = useFireBaseActions();
+    const {user} = useAuth();
+    const {buscarCategorias,addLancamento} = useFireBaseActions(user);
     const [categorias,setCategorias] = useState([]);
     const [descricao, setDescricao] = useState('');
     const [categoria, setCategoria] = useState('');

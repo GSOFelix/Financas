@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { useFireBaseActions } from "../hooks/useFirebaseActions";
-import { Meses, Tipos } from "../constants/filtros";
+import { Meses, Tipos, anos } from "../constants/filtros";
 import RelacaoTransacao from "../components/RelacaoTransacao";
 import ModalEditar from "../components/ModalEditar";
+import { useAuth } from "../context/authContext";
 
 export default function Relatorios(){
-    const{buscarCategorias,editarLancamento,apagarLancamento} = useFireBaseActions();
+    const {user} = useAuth();
+    const{buscarCategorias,editarLancamento,apagarLancamento} = useFireBaseActions(user);
     const [categorias,setCategorias] = useState([]);
     const [categoriaSelecionada, setCategoriaSelecionada] = useState('');
     const [mesSelecionado,setMesSelecionado] = useState('');
+    const [anoSelecionado, setAnoSelecionado] = useState(new Date().getFullYear().toString());
     const [tipoSelecionado,setTipoSelecionado] = useState('');
     const [showModal,setShowModal] = useState(false);
     const [editeItem,setEditItem] = useState(null);
@@ -54,42 +57,68 @@ export default function Relatorios(){
       </div>
 
       {/* Filtros */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full md:w-auto">
-        <select
-          id="filtroMes"
-          value={mesSelecionado}
-          onChange={(e) => setMesSelecionado(e.target.value)}
-          className="w-full pl-3 pr-10 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e] focus:border-[#22c55e]"
-        >
-          <option value="">Todos os meses</option>
-          {Meses.map((mes, index) => (
-            <option key={index} value={mes}>{mes}</option>
-          ))}
-        </select>
-
-        <select
-          id="filtroCategoria"
-          value={categoriaSelecionada}
-          onChange={(e) => setCategoriaSelecionada(e.target.value)}
-          className="w-full pl-3 pr-10 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e] focus:border-[#22c55e]"
-        >
-          <option value="">Todas as categorias</option>
-          {categorias.map((cat) => (
-            <option key={cat.id} value={cat.descricao}>{cat.descricao}</option>
-          ))}
-        </select>
-
-        <select
-          id="filtroTipo"
-          value={tipoSelecionado}
-          onChange={(e) => setTipoSelecionado(e.target.value)}
-          className="w-full pl-3 pr-10 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e] focus:border-[#22c55e]"
-        >
-          <option value="">Todos os tipos</option>
-          <option value="C">Receita</option>
-          <option value="D">Despesa</option>
-        </select>
-      </div>
+<div className="space-y-4">
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full md:w-auto">
+    <select
+      id="filtroMes"
+      value={mesSelecionado}
+      onChange={(e) => setMesSelecionado(e.target.value)}
+      className="w-full pl-3 pr-10 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e] focus:border-[#22c55e]"
+    >
+      <option value="">Todos os meses</option>
+      {Meses.map((mes, index) => (
+        <option key={index} value={index + 1}>{mes}</option> // O value agora é o número do mês (1-12)
+      ))}
+    </select>
+    <select
+    id="filtroAno"
+    value={anoSelecionado}
+    onChange={(e) => setAnoSelecionado(e.target.value)}
+    className="w-full pl-3 pr-10 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e] focus:border-[#22c55e]"
+  >
+    {anos.map((ano) => (
+      <option key={ano} value={ano}>{ano}</option>
+    ))}
+  </select>
+    <select
+      id="filtroCategoria"
+      value={categoriaSelecionada}
+      onChange={(e) => setCategoriaSelecionada(e.target.value)}
+      className="w-full pl-3 pr-10 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e] focus:border-[#22c55e]"
+    >
+      <option value="">Todas as categorias</option>
+      {categorias.map((cat) => (
+        <option key={cat.id} value={cat.descricao}>{cat.descricao}</option>
+      ))}
+    </select>
+    <select
+      id="filtroTipo"
+      value={tipoSelecionado}
+      onChange={(e) => setTipoSelecionado(e.target.value)}
+      className="w-full pl-3 pr-10 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e] focus:border-[#22c55e]"
+    >
+      <option value="">Todos os tipos</option>
+      <option value="C">Receita</option>
+      <option value="D">Despesa</option>
+    </select>
+  </div>
+  
+  {/* Botão Limpar Filtros */}
+  {(mesSelecionado || categoriaSelecionada || tipoSelecionado) && (
+    <button
+      onClick={() => {
+        setMesSelecionado('');
+        setAnoSelecionado('')
+        setCategoriaSelecionada('');
+        setTipoSelecionado('');
+      }}
+      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-[#22c55e] transition-colors duration-200"
+    >
+      <i className="fas fa-times-circle"></i>
+      Limpar filtros
+    </button>
+  )}
+</div>
     </div>
   </div>
 
@@ -97,6 +126,7 @@ export default function Relatorios(){
           <RelacaoTransacao
             input={input}
             mes={mesSelecionado}
+            ano={anoSelecionado}
             categoria={categoriaSelecionada}
             tipo={tipoSelecionado}
             onEdit={handleEditeItem}

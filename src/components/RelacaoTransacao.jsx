@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useFireBaseActions } from "../hooks/useFirebaseActions"
 import Swal from 'sweetalert2';
+import { useAuth } from "../context/authContext";
 
-export default function RelacaoTransacao({input,mes,categoria,tipo,onEdit,DeletarLancamento}){
-    const {buscarLancamentos} = useFireBaseActions();
+export default function RelacaoTransacao({input,mes,ano,categoria,tipo,onEdit,DeletarLancamento}){
+  const {user} = useAuth(); 
+  const {buscarLancamentos} = useFireBaseActions(user);
     const [Lancamentos,setLancamentos] = useState([]);
     
     const handleDelete = (id) => {
@@ -29,13 +31,17 @@ export default function RelacaoTransacao({input,mes,categoria,tipo,onEdit,Deleta
           const filtrados = todosLancamentos.filter((lan) => {
             const data = lan.data?.toDate();
             const mesNome = data?.toLocaleDateString('pt-BR', { month: 'long' });
+            const anoLancamento = data?.getFullYear();
       
             const matchCategoria =
                 !categoria || lan.categoria === categoria;
       
             const matchMes =
               !mes || mesNome?.toLowerCase() === mes.toLowerCase();
-      
+            
+            const matchAno = 
+              !ano || anoLancamento.toString() === ano;
+
             const matchTipo =
               !tipo || lan.tipo === tipo;
       
@@ -43,7 +49,7 @@ export default function RelacaoTransacao({input,mes,categoria,tipo,onEdit,Deleta
               !input ||
               lan.descricao?.toLowerCase().includes(input.toLowerCase());
       
-            return matchCategoria && matchMes && matchTipo && matchDescricao;
+            return matchCategoria && matchMes && matchAno && matchTipo && matchDescricao;
           });
       
           setLancamentos(filtrados);
