@@ -47,7 +47,7 @@ export default function Layout() {
         </div>
         <nav className={`space-y-2 ${isMenuOpen ? 'block' : 'hidden md:block'}`}>
           <Link
-            to="home"
+            to="/home"
             className={`flex items-center space-x-2 p-2 rounded-lg ${
               isActive('/') ? 'bg-[#171717] text-[#4ade80]' : 'text-gray-300 hover:bg-[#171717] hover:text-white'
             }`}
@@ -56,7 +56,7 @@ export default function Layout() {
             <span>Dashboard</span>
           </Link>
           <Link
-            to="relatorios"
+            to="/relatorios"
             className={`flex items-center space-x-2 p-2 rounded-lg ${
               isActive('/relatorios') ? 'bg-[#171717] text-[#4ade80]' : 'text-gray-300 hover:bg-[#171717] hover:text-white'
             }`}
