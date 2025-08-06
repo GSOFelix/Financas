@@ -5,21 +5,38 @@ import {
     doc,
     deleteDoc,
     updateDoc,
-    Timestamp
+    Timestamp,
+    query,
+    where,
+    getDoc
 } from 'firebase/firestore'
     import {db} from '../firebase/config'
 
-export function useFireBaseActions(){
-
+export function useFireBaseActions(user){
     const buscarLancamentos = (callback) => {
-        onSnapshot(collection(db,'lancamentos'), (snapshot) => {
-            const result = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-              }));
-            console.log(result);
-            callback(result);
-        })
+        try {
+            const q = query(
+                collection(db, 'lancamentos'), 
+                where("uid", "==", user.uid)
+            );
+            
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+                const result = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                callback(result);
+            }, (error) => {
+                console.error("Erro ao buscar lançamentos:", error);
+                callback([]); // Retorna array vazio em caso de erro
+            });
+    
+            // Retorna função de cleanup
+            return unsubscribe;
+        } catch(error) {
+            console.error("Erro ao configurar listener:", error);
+            callback([]); // Retorna array vazio em caso de erro
+        }
     }
 
     const buscarCategorias = (callback) => {
@@ -28,7 +45,6 @@ export function useFireBaseActions(){
                 id: doc.id,
                 ...doc.data(),
               }));
-            console.log(result);
             callback(result);
         })
     }
@@ -39,6 +55,7 @@ export function useFireBaseActions(){
         try{
             
             await addDoc(collection(db,'lancamentos'),{
+                uid: user.uid,
                 descricao: data.descricao,
                 categoria: data.categoria,
                 tipo: data.tipo,
@@ -51,16 +68,36 @@ export function useFireBaseActions(){
         }
     }
 
-    const editarLancamento = async (atualizacao) =>{
-        const { id, ...dadosParaAtualizar } = atualizacao; 
-        const documentoRef = doc(db, 'lancamentos', id);
-        await updateDoc(documentoRef, dadosParaAtualizar);
+    const editarLancamento = async (atualizacao) => {
+        if (!user) return;
+
+        const { id, ...dadosParaAtualizar } = atualizacao;
+        try {
+            const docRef = doc(db, 'lancamentos', id);
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists() && docSnap.data().uid === user.uid) {
+                await updateDoc(docRef, dadosParaAtualizar);
+            }
+        } catch(e) {
+            console.error('Erro ao editar lançamento:', e);
+        }
     }
 
-   const apagarLancamento = async (lancamentoId) => {
-        const documento = doc(db, 'lancamentos', lancamentoId);
-        await deleteDoc(documento);
-      }
+    const apagarLancamento = async (lancamentoId) => {
+        if (!user) return;
+
+        try {
+            const docRef = doc(db, 'lancamentos', lancamentoId);
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists() && docSnap.data().uid === user.uid) {
+                await deleteDoc(docRef);
+            }
+        } catch(e) {
+            console.error('Erro ao apagar lançamento:', e);
+        }
+    }
 
     return {buscarLancamentos,buscarCategorias,addLancamento,editarLancamento,apagarLancamento}
 }
