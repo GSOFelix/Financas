@@ -54,7 +54,7 @@ export default function RelacaoTransacao({input,mes,ano,categoria,tipo,onEdit,De
       
           setLancamentos(filtrados);
         });
-      }, [,input,mes, categoria, tipo]);
+      }, [,input,mes,ano, categoria, tipo]);
 
 
     return(

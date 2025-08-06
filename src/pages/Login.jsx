@@ -46,8 +46,8 @@ export default function Login(){
                             <span className="text-[#22c55e]">Finanças</span>
                             <span className="text-white">Pessoais</span>
                         </h1>
-                        <h2 className="text-xl font-semibold text-white mb-2">Welcome Back</h2>
-                        <p className="text-gray-300">Sign in to access your account</p>
+                        <h2 className="text-xl font-semibold text-white mb-2">Bem Vindo ao melhor controle de finanças</h2>
+                        <p className="text-gray-300">Entre para acessar sua conta</p>
                     </div>
                     
                     <div className="space-y-6">

@@ -11,7 +11,7 @@ export default function Relatorios(){
     const [categorias,setCategorias] = useState([]);
     const [categoriaSelecionada, setCategoriaSelecionada] = useState('');
     const [mesSelecionado,setMesSelecionado] = useState('');
-    const [anoSelecionado, setAnoSelecionado] = useState(new Date().getFullYear().toString());
+    const [anoSelecionado, setAnoSelecionado] = useState('');
     const [tipoSelecionado,setTipoSelecionado] = useState('');
     const [showModal,setShowModal] = useState(false);
     const [editeItem,setEditItem] = useState(null);
@@ -70,12 +70,14 @@ export default function Relatorios(){
         <option key={index} value={index + 1}>{mes}</option> // O value agora é o número do mês (1-12)
       ))}
     </select>
+
     <select
     id="filtroAno"
     value={anoSelecionado}
     onChange={(e) => setAnoSelecionado(e.target.value)}
     className="w-full pl-3 pr-10 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c55e] focus:border-[#22c55e]"
   >
+    <option value="">Todos os anos</option>
     {anos.map((ano) => (
       <option key={ano} value={ano}>{ano}</option>
     ))}

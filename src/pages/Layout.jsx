@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Outlet,useLocation } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 import { signOut } from 'firebase/auth';
@@ -10,6 +10,7 @@ export default function Layout() {
   const location = useLocation();
   const {user} = useAuth();
   const isActive = (path) => location.pathname === path;
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   const handleLogout = async () => {
     try {
@@ -39,11 +40,12 @@ export default function Layout() {
           <button
             className="md:hidden text-gray-300 hover:text-white"
             id="sidebarToggle"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <i className="fas fa-bars"></i>
           </button>
         </div>
-        <nav className="space-y-2">
+        <nav className={`space-y-2 ${isMenuOpen ? 'block' : 'hidden md:block'}`}>
           <Link
             to="home"
             className={`flex items-center space-x-2 p-2 rounded-lg ${
