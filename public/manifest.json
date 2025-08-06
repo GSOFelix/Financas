@@ -1,27 +1,42 @@
 {
-    "name": "Finanças Pessoais",
-    "short_name": "FinançasPess",
-    "description": "Aplicativo de controle de finanças",
-    "theme_color": "#ffffff",
-    "background_color": "#22c55e",
-    "display": "standalone",
-    "orientation": "any",
-    "start_url": "/",
-    "icons": [
-      {
-        "src": "icone-192.png",
-        "sizes": "192x192",
-        "type": "image/png"
-      },
-      {
-        "src": "icone-512.png",
-        "sizes": "512x512",
-        "type": "image/png"
-      },
-      {
-        "src": "icone-144.png",
-        "sizes": "144x144",
-        "type": "image/png"
-      }
-    ]
-  }
+  "name": "Finanças Pessoais",
+  "short_name": "FinançasPess",
+  "description": "Aplicativo de controle de finanças",
+  "theme_color": "#ffffff",
+  "background_color": "#22c55e",
+  "display": "standalone",
+  "orientation": "any",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
