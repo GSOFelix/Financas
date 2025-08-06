@@ -19,8 +19,8 @@ function App() {
           </PrivateRoute>
         }>
           <Route index element={<DashBoard />} />
-          <Route path='home' element={<DashBoard/>}/>
-          <Route path='relatorios' element={<Relatorios/>}/>
+          <Route path='/home' element={<DashBoard/>}/>
+          <Route path='/relatorios' element={<Relatorios/>}/>
         </Route>
       </Routes>
     </BrowserRouter>
